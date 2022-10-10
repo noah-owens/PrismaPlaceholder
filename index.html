@@ -1,19 +1,105 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>PrismaPicker | A World of Stained Glass Color</title>
+        <title>PrismaPicker | Glass Color Made Easy</title>
+        <link rel="stylesheet" href="styles/main.css">
         <meta charset="utf-8">
     </head>
     <body>
-        <nav>
-            <ul>
-                <li id="navLogo">PrismaPicker</li>
-                <li>Home</li>
-                <li>Contact</li>
-            </ul>
-        </nav>
-        <h1>PrismaPicker</h1>
-        
-        <h2>An <span id="ocean">Ocean</span> of Glass at your Fingertips</h2>
+        <div class="wrapper">
+            <h1>PrismaPicker</h1>
+            
+            <section>
+                <h2>An <span class="ocean">Ocean</span> of Glass at your Fingertips</h2>
+
+                <p>PrismaPicker will be able to take a user provided image, analyze it to create a color palette, and match those colors to a catalog scraped from the <a href="https://oceansidecompatible.com/pages/sheet-glass">Oceanside Glass and Tile</a> catalog. Also available in <a href="resources/documents/art-glass-catalog.pdf">PDF form</a>.</p>
+            </section>
+
+            <section>
+                <h2>Terms of Service and Safety Measures</h2>
+
+                <p>In order to upload a picture and receive a color palette, users will be required to make an account. As part of the account creation process, users must certify, by checking a box, that by creating an account they accept the terms and conditions in full. The terms and conditions will encompass at least these aspects:</p>
+
+                <ol>
+                    <li>Any content that you upload is the property of the user, or used with permission by the owner</li>
+                    <li>Content which is illegal, harassing, or includes depictions of nudity or gore is not permitted</li>
+                    <li>Violations of these terms will result in suspension or termination of your account</li>
+                </ol>
+
+                <p>Additionally, to save on space, cost, and hopefully further reduce liability, uploaded images will be deleted shortly after they are processed.</p>
+            </section>
+
+            <section>
+                <h2>Method</h2>
+
+                <p>Taking an uploaded image and loading it into a <span class="snippet">&lt;canvas&gt;</span> element makes it possible to use the <span class="snippet">getImageData()</span> method, which returns an array of values representing the rgba color of every pixel in the image. Reasonably speaking, this will require that a maximum resolution be imposed on uploaded images (likely no more than 400px in either direction) to prioritize speed.</p>
+
+                <p>The array of rgba colors can be easily iterated through and turned into rgb colors, since the alpha channel is weird and more trouble than it's worth.</p>
+
+                <p>Next is color quantization, which is a process of reducing color variety in an image while attempting to keep the resulting image as visually faithful to the original as possible. Using a <a href="https://en.wikipedia.org/wiki/Median_cut">median cut</a> algorithm, the number of colors can be reduced to some arbitrary amount of final colors.</p>
+
+                <p>Those color values are then ready to be compared to a database of products from the oceanside catalog, searching first for exact matches if possible, then settling for nearest-neighbor selections.</p>
+            </section>
+
+            <section>
+                <h2>Database Structure</h2>
+
+                <p>The MySQL database for glass color reference will include a primary key ID, and secondary keys SKU, Name, Color, and Link.</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="tShort">Name</th>
+                            <th class="tShort">Data Type</th>
+                            <th class="tLong">Example Entry</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="tShort">ID</td>
+                            <td class="tShort">int</td>
+                            <td class="tLong">27</td>
+                        </tr>
+                        <tr>
+                            <td class="tShort">SKU</td>
+                            <td class="tShort">varchar(15)</td>
+                            <td class="tLong">6051-83CC-F</td>
+                        </tr>
+                        <tr>
+                            <td class="tShort">Name</td>
+                            <td class="tShort">varchar(50)</td>
+                            <td class="tLong">Autumn Flame Pearl Opal Fusible</td>
+                        </tr>
+                        <tr>
+                            <td class="tShort">Color</td>
+                            <td class="tShort">varchar(11)</td>
+                            <td class="tLong">255,254,253</td>
+                        </tr>
+                        <tr>
+                            <td class="tShort">Link</td>
+                            <td class="tShort">varchar(50)</td>
+                            <td class="tLong">autumn-flame-pearl-opal-fusible</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>Links will be stored as just the part after <span class="snippet">https://oceansidecompatible.com/products/</span> since it will remain constant. I was thinking of storing links in the table for safety, as even though I strongly suspect that all urls are just the color names with any non-alphanumeric characters stripped and spaces replaced with hyphens, there may be edge-cases where the link couldn't be derived from the Name attribute by a stored procedure.</p>
+            </section>
+
+            <section>
+                <h2>Views</h2>
+
+                <p>There will be 3 views:</p>
+
+                <ol>
+                    <li>Login/Account Creation Page</li>
+                    <li>Home/Landing Page/Image Upload Page</li>
+                    <li>Results Page</li>
+                </ol>
+
+                <p>Additionally, there will need to be two DB tables, one for the glass information, and one for login information. Since login information is such a high security risk, it's a priority for me to learn to properly and safely implement a system for keeping credentials safe from myself and others.</p>
+            </section>
+
+        </div>
     </body>
 </html>
